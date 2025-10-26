@@ -85,30 +85,29 @@ if __name__ == "__main__":
         threads.append(thread)
         thread.start()
 
-    # Send speed closed-loop control command to motor ID 1
-    motor_id = 1
-    max_torque = 100  # 0~255, adjust as needed
-    speed_dps = 1000  # desired speed in dps
-    speed_ctrl = int(speed_dps / 0.01)  # convert to protocol units (0.01dps/LSB)
+    new_can_id = 2  # Set to desired CAN ID (1-32)
 
-    # --- Motor Stop Command (0x81) ---
-    stop_msg = ZCAN_CAN_OBJ()
-    stop_msg.ID = 0x280
-    stop_msg.SendType = 0
-    stop_msg.RemoteFlag = 0
-    stop_msg.ExternFlag = 0
-    stop_msg.DataLen = 8
-    stop_msg.Data[0] = 0x80
-    for i in range(1, 8):
-        stop_msg.Data[i] = 0x00
+    setid_msg = ZCAN_CAN_OBJ()
+    setid_msg.ID = 0x300  # Correct broadcast address for CANID setting
+    setid_msg.SendType = 0
+    setid_msg.RemoteFlag = 0
+    setid_msg.ExternFlag = 0
+    setid_msg.DataLen = 8
+    setid_msg.Data[0] = 0x79  # Command byte
+    setid_msg.Data[1] = 0x00
+    setid_msg.Data[2] = 0x00  # 0 = write
+    setid_msg.Data[3] = 0x00
+    setid_msg.Data[4] = 0x00
+    setid_msg.Data[5] = 0x00
+    setid_msg.Data[6] = 0x00  # Not used for 1-32
+    setid_msg.Data[7] = new_can_id  # New CAN ID
 
     for ch in range(MAX_CHANNELS):
-        send_ret = lib.VCI_Transmit(DevType, 0, ch, byref(stop_msg), 1)
+        send_ret = lib.VCI_Transmit(DevType, 0, ch, byref(setid_msg), 1)
         if send_ret == 1:
-            print(f"Stop command sent to motor ID {motor_id} on channel {ch}")
+            print(f"Set CAN ID command sent (new ID: {new_can_id}) on channel {ch}")
         else:
-            print(f"Stop transmit fail on channel {ch}, sendcount is: {send_ret}")
-
+            print(f"Transmit fail on channel {ch}, sendcount is: {send_ret}")
 
 
     input("Press Enter to exit...\n")

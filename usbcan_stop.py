@@ -5,7 +5,7 @@ from ctypes import *
 lib = cdll.LoadLibrary("./libusbcan.so")
 
 USBCAN_II = c_uint32(4)
-MAX_CHANNELS = 2
+MAX_CHANNELS = 1
 g_thd_run = 1
 
 class ZCAN_CAN_OBJ(Structure):
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     # --- Motor Stop Command (0x81) ---
     stop_msg = ZCAN_CAN_OBJ()
-    stop_msg.ID = 0x140 + motor_id
+    stop_msg.ID = 0x280
     stop_msg.SendType = 0
     stop_msg.RemoteFlag = 0
     stop_msg.ExternFlag = 0

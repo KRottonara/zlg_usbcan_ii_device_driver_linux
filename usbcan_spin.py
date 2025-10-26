@@ -5,7 +5,7 @@ from ctypes import *
 lib = cdll.LoadLibrary("./libusbcan.so")
 
 USBCAN_II = c_uint32(4)
-MAX_CHANNELS = 2
+MAX_CHANNELS = 1
 g_thd_run = 1
 
 class ZCAN_CAN_OBJ(Structure):
@@ -86,13 +86,13 @@ if __name__ == "__main__":
         thread.start()
 
     # Send speed closed-loop control command to motor ID 1
-    motor_id = 1
+    motor_id = 2
     max_torque = 100  # 0~255, adjust as needed
-    speed_dps = 1000  # desired speed in dps
+    speed_dps = -100  # desired speed in dps
     speed_ctrl = int(speed_dps / 0.01)  # convert to protocol units (0.01dps/LSB)
 
     msg = ZCAN_CAN_OBJ()
-    msg.ID = 0x140 + motor_id
+    msg.ID = 0x280
     msg.SendType = 0
     msg.RemoteFlag = 0
     msg.ExternFlag = 0

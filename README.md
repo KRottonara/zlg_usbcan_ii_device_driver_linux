@@ -64,3 +64,9 @@ sudo cp libzuds.so.20231025 /usr/lib/
      ```sh
      udevadm control --reload
      ```
+
+
+     ## Reference
+
+     For more information and source files, see:  
+     [https://manual.zlg.cn/web/#/146](https://manual.zlg.cn/web/#/146)
